@@ -53,7 +53,11 @@ impl FileStats {
         )?;
         writeln!(writer, "Total lines: {}", self.total_lines)?;
         writeln!(writer, "Empty lines: {}", self.empty_lines)?;
-        writeln!(writer, "Line ending type: {}", self.determine_line_ending_type())?;
+        writeln!(
+            writer,
+            "Line ending type: {}",
+            self.determine_line_ending_type()
+        )?;
         writeln!(writer, "DOS line endings (CRLF): {}", self.dos_endings)?;
         writeln!(writer, "Unix line endings (LF): {}", self.unix_endings)?;
         Ok(())
@@ -68,7 +72,7 @@ fn analyze_file(path: &str) -> io::Result<FileStats> {
 
     let mut current_line = Vec::new();
     let mut i = 0;
-    
+
     while i < contents.len() {
         match contents[i] {
             b'\r' => {
@@ -120,7 +124,7 @@ fn run(args: Vec<String>) -> Result<(), String> {
         Ok(stats) => {
             stats.display(&mut std::io::stdout()).unwrap();
             Ok(())
-        },
+        }
         Err(e) => Err(format!("Error analyzing file: {}", e)),
     }
 }
@@ -191,7 +195,10 @@ mod tests {
     #[test]
     fn test_determine_line_ending_type_none() {
         let stats = FileStats::new("test_file.txt".to_string());
-        assert_eq!(stats.determine_line_ending_type(), "No line endings detected");
+        assert_eq!(
+            stats.determine_line_ending_type(),
+            "No line endings detected"
+        );
     }
 
     #[test]
@@ -258,7 +265,7 @@ mod tests {
     fn test_analyze_file_mac_endings() {
         let file_path = create_temp_file("mac.txt", "line1\rline2\r");
         let stats = analyze_file(&file_path).unwrap();
-        assert_eq!(stats.total_lines, 1); 
+        assert_eq!(stats.total_lines, 1);
         assert_eq!(stats.unix_endings, 0);
         assert_eq!(stats.dos_endings, 0);
         fs::remove_file(file_path).unwrap();
